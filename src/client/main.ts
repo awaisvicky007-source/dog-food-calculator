@@ -115,7 +115,7 @@ function renderResults(c: Current) {
     ${stat(approx ? 'Cups per day (approx.)' : 'Cups per day', cups(r.cups.perDay, r.cups.exact), approx ? 'Illustrative 300\u2013400 kcal/cup. Enter your bag\u2019s value for exact.' : `${cups(r.cups.perMeal, true)} per meal`)}
     ${grams}
     ${stat('Treat budget', `${n0(r.treatKcal)} <small>kcal</small>`, `\u2264 10% of daily calories \u00b7 food drops to ${n0(r.foodKcalAfterTreats)} kcal`)}
-    ${stat('Water (total)', `${n0(r.water.lowMl)}\u2013${n0(r.water.highMl)} <small>mL</small>`, `${waterOz} \u00b7 includes water in food`)}
+    ${stat('Water (drinking)', `${n0(r.water.lowMl)}\u2013${n0(r.water.highMl)} <small>mL</small>`, `${waterOz} \u00b7 target`)}
     ${stat('Per meal', approx ? `${r.cups.perMeal.low.toFixed(1)}\u2013${r.cups.perMeal.high.toFixed(1)} <small>cups</small>` : `${r.cups.perMeal.low.toFixed(2)} <small>cups</small>`, r.mealsNote)}
   </div>
   ${approx ? `<p class="callout">Cups are approximate. Enter <strong>kcal per cup</strong> from the food bag (Food label section above) for an exact amount.</p>` : ''}
@@ -172,7 +172,7 @@ function summaryText(c: Current): string {
     r.grams ? `Grams/day: ${n0(r.grams.perDay)} g (${n0(r.grams.perMeal)} g per meal)` : '',
     `Meals/day: ${r.mealsPerDay}`,
     `Treat budget: up to ${n0(r.treatKcal)} kcal/day (10%)`,
-    `Water (total): ${n0(r.water.lowMl)}-${n0(r.water.highMl)} mL/day`,
+    `Water (drinking): ${n0(r.water.lowMl)}-${n0(r.water.highMl)} mL/day`,
     'Educational information, not veterinary advice.',
   ];
   return lines.filter(Boolean).join('\n');

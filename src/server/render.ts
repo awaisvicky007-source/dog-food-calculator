@@ -4,9 +4,7 @@ import { FAQ } from '../content/faq.js';
 export interface RenderOptions {
   cssUrl?: string;
   jsUrl: string;
-  /** Public origin, e.g. https://www.pawvortex.com */
   origin?: string;
-  /** Public path, e.g. /tools/dog-food-calculator */
   path?: string;
   dev?: boolean;
 }
@@ -154,7 +152,7 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
           <div class="inline"><input id="bagSize" type="text" inputmode="decimal" placeholder="optional">
           <select id="bagUnit" aria-label="Bag size unit">${opt('lb', 'lb', true)}${opt('kg', 'kg')}</select></div></div>
       </div>
-      <p class="hint">Pet food labels state calories as kcal/kg and per cup (AAFCO). Grams are only calculated from label values - never guessed.</p>
+      <p class="hint">Most pet foods label calories as kcal/kg plus a per-unit figure (per cup for dry, per can for wet; AAFCO model regulations). Grams are only calculated from label values - never guessed.</p>
     </details>
 
     <details class="more"><summary>Advanced <span class="opt">(body condition &amp; activity)</span></summary>
@@ -196,6 +194,8 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
 <section class="content card" aria-labelledby="how-h">
   <h2 id="how-h">How the calculator works</h2>
   <p>It estimates resting energy requirement (RER) from body weight, applies a published factor for life stage and status to get maintenance energy (MER), then converts calories to cups or grams using <em>your</em> food\u2019s label. Everything runs in your browser.</p>
+  <p><strong>About the multipliers.</strong> Merck publishes a point value for each life stage and status (for example 1.6 \u00d7 RER for neutered adults). AAHA\u2019s 2021 nutrition guideline publishes ranges (1.4\u20131.6 \u00d7 RER for neutered adults, 1.6\u20131.8 for intact). If your dog gains weight on the point value shown, use the lower end - select \u201cprone to weight gain\u201d (1.4\u00d7) - or ask your veterinarian for a target.</p>
+  <p><strong>About water.</strong> The water figure is a <em>drinking-water</em> target (44\u201366 mL/kg/day, Merck). It does not include water already present in wet food; reduce the target accordingly if you feed wet or raw.</p>
   <h2>Frequently asked questions</h2>
   ${faq}
   <h2 id="sources">Sources</h2>

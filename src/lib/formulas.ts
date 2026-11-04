@@ -104,11 +104,15 @@ export function pickMultiplier(
   return { value: 1.6, label: 'Adult, neutered' };
 }
 
-/** Maintenance fluid range, mL/24 h (Merck): 30 x kg + 70  to  132 x kg^0.75. */
+/**
+ * Drinking-water target, mL/24 h.
+ * Source: Merck Veterinary Manual — water requirements of small animals (44-66 mL/kg/day).
+ * The upper end covers hot weather, exercise, and high-dry-food diets.
+ * NOTE: this is drinking water, NOT hospital maintenance-fluid therapy
+ * (which was 30*kg + 70 to 132*kg^0.75 and included food water).
+ */
 export function waterRange(kg: number): { lowMl: number; highMl: number } {
-  const a = 30 * kg + 70;
-  const b = 132 * Math.pow(kg, 0.75);
-  return { lowMl: Math.min(a, b), highMl: Math.max(a, b) };
+  return { lowMl: 44 * kg, highMl: 66 * kg };
 }
 
 export function validate(i: Partial<CalcInput> & { weightKg?: number }): string[] {
@@ -181,6 +185,10 @@ export function calculate(input: CalcInput): CalcResult {
     notices.push(
       'Working-dog multipliers are wide ranges in the veterinary literature. Confirm the amount with your veterinarian and adjust to body condition.',
     );
+  if (stage === 'adult')
+    notices.push(
+      'Merck publishes a point value (1.6 \u00d7 RER for neutered adults); AAHA\u2019s 2021 guideline publishes a range (1.4\u20131.6). If your dog gains weight on this amount, switch to \u201cprone to weight gain\u201d (1.4\u00d7) or ask your veterinarian.',
+    );
   if (input.bcs !== undefined) {
     if (input.bcs >= 7)
       notices.push(
@@ -230,8 +238,8 @@ export function calculate(input: CalcInput): CalcResult {
       cite: 'wsava_nutrition',
     },
     {
-      label: 'Water range (total, including water in food)',
-      formula: `30 \u00d7 ${kg.toFixed(2)} + 70  to  132 \u00d7 ${kg.toFixed(2)}^0.75`,
+      label: 'Water range (drinking)',
+      formula: `44 \u00d7 ${kg.toFixed(2)}  to  66 \u00d7 ${kg.toFixed(2)}`,
       result: `${Math.round(water.lowMl)}-${Math.round(water.highMl)} mL/day`,
       cite: 'merck_fluids',
     },

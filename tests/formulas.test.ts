@@ -25,10 +25,10 @@ describe('PRD acceptance criteria', () => {
     expect(r.treatKcal).toBeCloseTo(r.mer * 0.1, 6);
     expect(r.foodKcalAfterTreats).toBeCloseTo(r.mer * 0.9, 6);
   });
-  it('AC-05: water is a range from Merck formulas', () => {
+  it('AC-05: water is a range from Merck drinking-water guidance (44-66 mL/kg)', () => {
     const w = waterRange(lbToKg(30));
-    expect(w.lowMl).toBeCloseTo(30 * lbToKg(30) + 70, 3);
-    expect(w.highMl).toBeCloseTo(132 * Math.pow(lbToKg(30), 0.75), 3);
+    expect(w.lowMl).toBeCloseTo(44 * lbToKg(30), 3);
+    expect(w.highMl).toBeCloseTo(66 * lbToKg(30), 3);
     expect(w.lowMl).toBeLessThan(w.highMl);
   });
 });
