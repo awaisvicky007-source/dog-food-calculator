@@ -7,6 +7,13 @@ import { verifyProxySignature } from '../src/server/shopify-proxy.js';
  * Returns the full HTML shell. All CSS/JS comes from cdn.shopify.com (ASSET_*_URL).
  */
 export default function handler(req: VercelRequest, res: VercelResponse) {
+  // 🔍 DEBUG — remove after 401 is diagnosed
+  console.log('[calc] path =', req.url);
+  console.log('[calc] query keys =', Object.keys(req.query || {}));
+  console.log('[calc] signature present =', typeof (req.query as any)?.signature);
+  console.log('[calc] secret length =', process.env.SHOPIFY_API_SECRET?.length ?? 0);
+  console.log('[calc] full query =', JSON.stringify(req.query));
+
   const env = process.env.VERCEL_ENV ?? 'development';
   const isProd = env === 'production';
 
