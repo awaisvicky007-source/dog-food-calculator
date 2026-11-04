@@ -1,34 +1,114 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { renderPage } from '../src/server/render.js';
-import { verifyProxySignature } from '../src/server/shopify-proxy.js';
+import { computeProxySignature, verifyProxySignature } from '../src/server/shopify-proxy.js';
 
 /**
  * Shopify App Proxy target: https://<project>.vercel.app/calculator
  * Returns the full HTML shell. All CSS/JS comes from cdn.shopify.com (ASSET_*_URL).
  */
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  // 🔍 DEBUG — remove after 401 is diagnosed
-  console.log('[calc] path =', req.url);
-  console.log('[calc] query keys =', Object.keys(req.query || {}));
-  console.log('[calc] signature present =', typeof (req.query as any)?.signature);
-  console.log('[calc] secret length =', process.env.SHOPIFY_API_SECRET?.length ?? 0);
-  console.log('[calc] full query =', JSON.stringify(req.query));
-
   const env = process.env.VERCEL_ENV ?? 'development';
   const isProd = env === 'production';
 
-  const allowUnsigned = process.env.ALLOW_UNSIGNED === '1' && !isProd;
-  const secret = process.env.SHOPIFY_API_SECRET;
-  if (!allowUnsigned && (!secret || !verifyProxySignature(req.query, secret))) {
-    res.status(401).setHeader('Cache-Control', 'no-store').json({ error: 'unauthorized' });
+  // Defensive trim — Vercel env var UI often captures a trailing newline from
+  // paste, which silently breaks HMAC-SHA256. Shopify API secrets never contain
+  // whitespace, so trimming is always safe.
+  const rawSecret = process.env.SHOPIFY_API_SECRET ?? '';
+  const secret = rawSecret.trim();
+
+  // 🔍 DEBUG — hit /calculator?__debug=1 to get diagnostics as JSON (no signature required)
+  if (req.query.__debug === '1') {
+    const q = (req.query ?? {}) as Record<string, unknown>;
+    const sig = q.signature;
+    const signatureString = typeof sig === 'string' ? sig : null;
+
+    const queryNoDebug = { ...q };
+    delete queryNoDebug.__debug;
+
+    let expectedWithoutDebug: string | null = null;
+    let expectedWithDebug: string | null = null;
+    try {
+      expectedWithoutDebug = computeProxySignature(
+        queryNoDebug as Record<string, string | string[] | undefined>,
+        secret,
+      );
+      expectedWithDebug = computeProxySignature(
+        q as Record<string, string | string[] | undefined>,
+        secret,
+      );
+    } catch { /* ignore */ }
+
+    res.status(200).setHeader('Cache-Control', 'no-store').json({
+      url: req.url,
+      queryKeys: Object.keys(q).sort(),
+      queryFull: q,
+      signatureReceived: signatureString,
+      signatureType: Array.isArray(sig) ? 'array' : typeof sig,
+      signatureLength: signatureString?.length ?? 0,
+      expectedWithoutDebug,
+      expectedWithDebug,
+      matchesWithoutDebug: signatureString !== null && signatureString === expectedWithoutDebug,
+      matchesWithDebug: signatureString !== null && signatureString === expectedWithDebug,
+
+      secretPresent: rawSecret.length > 0,
+      secretRawLength: rawSecret.length,
+      secretTrimmedLength: secret.length,
+      secretHadWhitespace: rawSecret !== secret,
+      secretFirstCharCode: secret.length > 0 ? secret.charCodeAt(0) : null,
+      secretLastCharCode: secret.length > 0 ? secret.charCodeAt(secret.length - 1) : null,
+
+      cssUrlSet: !!process.env.ASSET_CSS_URL,
+      jsUrlSet: !!process.env.ASSET_JS_URL,
+      cssUrlHost: process.env.ASSET_CSS_URL ? safeHost(process.env.ASSET_CSS_URL) : null,
+      jsUrlHost: process.env.ASSET_JS_URL ? safeHost(process.env.ASSET_JS_URL) : null,
+      env,
+      isProd,
+    });
     return;
+  }
+
+  const allowUnsigned = process.env.ALLOW_UNSIGNED === '1' && !isProd;
+
+  if (!allowUnsigned) {
+    if (!secret) {
+      console.error('[calc] SHOPIFY_API_SECRET is empty or missing');
+      res.status(401).setHeader('Cache-Control', 'no-store')
+        .json({ error: 'unauthorized', reason: 'no_secret' });
+      return;
+    }
+
+    // Try trimmed first, then raw (in case a legitimate secret contains whitespace,
+    // which Shopify should never produce, but we don't want to break anything).
+    let verified = verifyProxySignature(req.query, secret);
+    if (!verified && rawSecret !== secret) {
+      verified = verifyProxySignature(req.query, rawSecret);
+    }
+
+    if (!verified) {
+      console.warn('[calc] signature verification failed', {
+        path: req.url,
+        queryKeys: Object.keys(req.query || {}).sort(),
+        secretRawLength: rawSecret.length,
+        secretTrimmedLength: secret.length,
+        secretHadWhitespace: rawSecret !== secret,
+      });
+      res.status(401).setHeader('Cache-Control', 'no-store')
+        .json({ error: 'unauthorized', reason: 'signature_mismatch' });
+      return;
+    }
   }
 
   const cssUrl = process.env.ASSET_CSS_URL;
   const jsUrl = process.env.ASSET_JS_URL;
   // Fail closed: never ship HTML that points at missing assets (FR-54).
-  if (!cssUrl || !jsUrl || !cssUrl.startsWith('https://cdn.shopify.com/') || !jsUrl.startsWith('https://cdn.shopify.com/')) {
-    res.status(500).setHeader('Cache-Control', 'no-store').json({ error: 'asset urls not configured' });
+  if (
+    !cssUrl || !jsUrl ||
+    !cssUrl.startsWith('https://cdn.shopify.com/') ||
+    !jsUrl.startsWith('https://cdn.shopify.com/')
+  ) {
+    console.error('[calc] asset URLs missing or wrong host', { cssUrl, jsUrl });
+    res.status(500).setHeader('Cache-Control', 'no-store')
+      .json({ error: 'asset_urls_not_configured' });
     return;
   }
 
@@ -52,4 +132,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     ].join('; '),
   );
   res.status(200).send(renderPage({ cssUrl, jsUrl }));
+}
+
+function safeHost(url: string): string | null {
+  try { return new URL(url).hostname; } catch { return null; }
 }
