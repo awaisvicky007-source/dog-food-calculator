@@ -95,7 +95,7 @@ export function renderPage(o: RenderOptions): string {
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="${origin}${path}">
-<meta name="theme-color" content="#0f5e4d">
+<meta name="theme-color" content="#FFB61A">
 ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
 <script type="application/ld+json">${jsonLd(schema(origin, path))}</script>
 </head>

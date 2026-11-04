@@ -1,7 +1,7 @@
 import './styles.css';
 import { calculate, validate, type CalcInput, type CalcResult, type Range } from '../lib/formulas.js';
 import { citationList, CITATIONS } from '../lib/citations.js';
-import { cupFraction, lbToKg, mlToFlOz, ozToG, parseNum } from '../lib/units.js';
+import { cupFraction, lbToKg, mlToFlOz, parseNum } from '../lib/units.js';
 import type { FormValues, LocalPet } from './types.js';
 import * as store from './storage.js';
 import { mealsIcs, reorderIcs, download } from './ics.js';
@@ -11,6 +11,26 @@ import { FOODS, addToCart } from './catalog.js';
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+// ---------- toast (visual save confirmation) ----------
+function toast(msg: string, kind: 'ok' | 'err' = 'ok') {
+  let host = document.getElementById('pv-toast-host');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'pv-toast-host';
+    host.className = 'pv-toast-host';
+    document.body.appendChild(host);
+  }
+  const el = document.createElement('div');
+  el.className = `pv-toast pv-toast--${kind}`;
+  el.textContent = msg;
+  host.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('pv-toast--visible'));
+  setTimeout(() => {
+    el.classList.remove('pv-toast--visible');
+    setTimeout(() => el.remove(), 300);
+  }, 3200);
+}
 
 const FIELDS = [
   'name', 'weight', 'weightUnit', 'age', 'ageUnit', 'adultStatus', 'bcs', 'activity',
@@ -56,10 +76,19 @@ function toInput(v: FormValues): { input?: CalcInput; errors: string[] } {
 
 // ---------- formatting ----------
 const n0 = (n: number) => Math.round(n).toLocaleString('en-US');
+// Round outward so displayed ranges honestly bracket the true value
+const floor1 = (n: number) => Math.floor(n * 10) / 10;
+const ceil1 = (n: number) => Math.ceil(n * 10) / 10;
+
 const cups = (r: Range, exact: boolean) =>
-  exact ? `${r.low.toFixed(2)} <small>(\u2248 ${cupFraction(r.low)})</small>` : `${r.low.toFixed(1)}\u2013${r.high.toFixed(1)}`;
+  exact
+    ? `${r.low.toFixed(2)} <small>(\u2248 ${cupFraction(r.low)})</small>`
+    : `${floor1(r.low)}\u2013${ceil1(r.high)}`;
+
 const cupsText = (r: Range, exact: boolean) =>
-  exact ? `${r.low.toFixed(2)} cups (about ${cupFraction(r.low)})` : `about ${r.low.toFixed(1)}-${r.high.toFixed(1)} cups (approximate)`;
+  exact
+    ? `${r.low.toFixed(2)} cups (about ${cupFraction(r.low)})`
+    : `about ${floor1(r.low)}-${ceil1(r.high)} cups (approximate)`;
 
 interface Current {
   values: FormValues;
@@ -116,7 +145,9 @@ function renderResults(c: Current) {
     ${grams}
     ${stat('Treat budget', `${n0(r.treatKcal)} <small>kcal</small>`, `\u2264 10% of daily calories \u00b7 food drops to ${n0(r.foodKcalAfterTreats)} kcal`)}
     ${stat('Water (drinking)', `${n0(r.water.lowMl)}\u2013${n0(r.water.highMl)} <small>mL</small>`, `${waterOz} \u00b7 target`)}
-    ${stat('Per meal', approx ? `${r.cups.perMeal.low.toFixed(1)}\u2013${r.cups.perMeal.high.toFixed(1)} <small>cups</small>` : `${r.cups.perMeal.low.toFixed(2)} <small>cups</small>`, r.mealsNote)}
+    ${stat('Per meal', approx
+      ? `${floor1(r.cups.perMeal.low)}\u2013${ceil1(r.cups.perMeal.high)} <small>cups</small>`
+      : `${r.cups.perMeal.low.toFixed(2)} <small>cups</small>`, r.mealsNote)}
   </div>
   ${approx ? `<p class="callout">Cups are approximate. Enter <strong>kcal per cup</strong> from the food bag (Food label section above) for an exact amount.</p>` : ''}
   ${r.cups.exact ? `<p class="muted">With the full treat budget used, feed ${cupsText(r.cups.perDayAfterTreats, true)} of food per day.</p>` : ''}
@@ -178,6 +209,66 @@ function summaryText(c: Current): string {
   return lines.filter(Boolean).join('\n');
 }
 
+// ---------- PDF export (all saved pets) ----------
+function buildAllPetsPdf(pets: LocalPet[]): string {
+  const cards = pets
+    .map((p) => {
+      const { input } = toInput(p.values);
+      if (!input) return '';
+      const r = calculate(input);
+      const name = p.values.name || 'Unnamed dog';
+      const cupsDay = r.cups.exact
+        ? `${r.cups.perDay.low.toFixed(2)} cups`
+        : `${floor1(r.cups.perDay.low)}\u2013${ceil1(r.cups.perDay.high)} cups (approx.)`;
+      const cupsMeal = r.cups.exact
+        ? `${r.cups.perMeal.low.toFixed(2)} cups`
+        : `${floor1(r.cups.perMeal.low)}\u2013${ceil1(r.cups.perMeal.high)} cups`;
+      const gramsRow = r.grams
+        ? `<tr><td>Grams per day</td><td>${n0(r.grams.perDay)} g (${n0(r.grams.perMeal)} g per meal)</td></tr>`
+        : '';
+      return `<article class="pdf-card">
+        <h2>${esc(name)}</h2>
+        <p class="pdf-sub">${esc(r.multiplierLabel)} \u00b7 ${r.weightKg.toFixed(1)} kg \u00b7 ${r.mealsPerDay} meals/day</p>
+        <table class="pdf-table">
+          <tr><td>Calories per day</td><td>${n0(r.mer)} kcal (RER ${n0(r.rer)} \u00d7 ${r.multiplier})</td></tr>
+          <tr><td>Cups per day</td><td>${cupsDay}</td></tr>
+          <tr><td>Per meal</td><td>${cupsMeal}</td></tr>
+          ${gramsRow}
+          <tr><td>Treat budget</td><td>\u2264 ${n0(r.treatKcal)} kcal/day (10% of daily)</td></tr>
+          <tr><td>Water (drinking)</td><td>${n0(r.water.lowMl)}\u2013${n0(r.water.highMl)} mL (${Math.round(mlToFlOz(r.water.lowMl))}\u2013${Math.round(mlToFlOz(r.water.highMl))} fl oz)</td></tr>
+        </table>
+      </article>`;
+    })
+    .filter(Boolean)
+    .join('');
+
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>PawVortex \u2014 Saved Pet Plans</title>
+<style>
+  @page { margin: 18mm; }
+  body { font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif; max-width: 720px; margin: 0 auto; color: #111; line-height: 1.5; }
+  h1 { font-size: 20pt; margin: 0 0 4pt; }
+  h2 { font-size: 14pt; margin: 0 0 4pt; }
+  .subtitle { color: #666; font-size: 10pt; margin: 0 0 20pt; }
+  .pdf-card { page-break-inside: avoid; margin-bottom: 18pt; border: 1pt solid #e5e5e5; padding: 14pt 16pt; border-radius: 6pt; }
+  .pdf-sub { color: #666; font-size: 10pt; margin: 2pt 0 10pt; }
+  .pdf-table { width: 100%; border-collapse: collapse; font-size: 10.5pt; }
+  .pdf-table td { padding: 5pt 0; border-bottom: 1pt solid #f0f0f0; vertical-align: top; }
+  .pdf-table tr:last-child td { border-bottom: none; }
+  .pdf-table td:first-child { font-weight: 600; width: 40%; color: #333; }
+  footer { margin-top: 24pt; padding-top: 10pt; border-top: 1pt solid #ddd; font-size: 9pt; color: #666; line-height: 1.5; }
+  @media print { body { max-width: none; } .pdf-card { box-shadow: none; } }
+</style>
+</head><body>
+  <h1>PawVortex \u2014 Saved Pet Plans</h1>
+  <p class="subtitle">Generated ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} \u00b7 ${pets.length} saved pet${pets.length === 1 ? '' : 's'}</p>
+  ${cards}
+  <footer>
+    Educational nutrition information based on published sources (Merck Veterinary Manual, AAFCO, FDA, WSAVA, NRC). Not veterinary advice. Consult a licensed veterinarian for decisions about an individual dog.
+  </footer>
+</body></html>`;
+}
+
 // ---------- profiles ----------
 function renderProfiles() {
   const pets = store.loadPets();
@@ -201,7 +292,7 @@ function renderCompare(pets: LocalPet[]) {
     .filter((x): x is { p: LocalPet; t: { input: CalcInput; errors: string[] } } => !!x.t.input)
     .map(({ p, t }) => ({ p, r: calculate(t.input) }));
   if (rows.length < 2) return void (box.hidden = true);
-  const total = rows.reduce((s, x) => s + x.r.mer, 0);
+  const total = rows.reduce((s, x) => s + Math.round(x.r.mer), 0);
   const sameFood = rows.every((x) => x.r.cups.exact && x.r.cups.kcalPerCup === rows[0]!.r.cups.kcalPerCup);
   const totalCups = rows.reduce((s, x) => s + x.r.cups.perDay.low, 0);
   box.hidden = false;
@@ -265,10 +356,13 @@ function onResultsClick(e: Event) {
     current = { ...c, petId: c.petId ?? pets[pets.length - 1]?.id ?? '' };
     track('profile_saved_local');
     renderProfiles();
+    // Re-render results so button label flips to "Update saved pet"
+    renderResults(current);
+    toast('Saved to this device \u2014 click "Update saved pet" to change it later, or "Print / save as PDF" for a copy.');
     say('Saved on this device only.');
   } else if (act === 'copy') {
     void navigator.clipboard?.writeText(summaryText(c)).then(
-      () => say('Copied.'),
+      () => { toast('Plan copied to clipboard.'); say('Copied.'); },
       () => say('Copy is blocked by your browser. Use Print instead.'),
     );
   } else if (act === 'print') {
@@ -334,10 +428,34 @@ function boot() {
     }
   });
 
+  // ✅ Export = visual PDF of all saved pet plans (opens print dialog → user saves as PDF)
   $('exportBtn').addEventListener('click', () => {
-    download('pawvortex-pets.json', store.exportJson(), 'application/json');
+    const pets = store.loadPets();
+    if (!pets.length) {
+      toast('No saved pets to export yet. Calculate a plan and save it first.', 'err');
+      return;
+    }
+    const w = window.open('', '_blank');
+    if (!w) {
+      toast('Popup blocked. Allow popups for this site to export.', 'err');
+      return;
+    }
+    w.document.open();
+    w.document.write(buildAllPetsPdf(pets));
+    w.document.close();
+    setTimeout(() => {
+      try {
+        w.focus();
+        w.print();
+      } catch {
+        /* user can print manually from the tab */
+      }
+    }, 250);
     track('profile_exported');
+    toast(`Opened ${pets.length} pet plan${pets.length === 1 ? '' : 's'} — choose "Save as PDF" in the print dialog.`);
   });
+
+  // Import accepts the JSON backup (kept for restoring data across devices)
   $<HTMLInputElement>('importFile').addEventListener('change', async (e) => {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
@@ -345,11 +463,14 @@ function boot() {
       const n = store.importJson(await file.text());
       $('storageMsg').textContent = `Imported ${n} pet${n === 1 ? '' : 's'}.`;
       renderProfiles();
+      toast(`Imported ${n} pet${n === 1 ? '' : 's'}.`);
     } catch (err) {
       $('storageMsg').textContent = err instanceof Error ? err.message : 'Import failed.';
+      toast(err instanceof Error ? err.message : 'Import failed.', 'err');
     }
     (e.target as HTMLInputElement).value = '';
   });
+
   $('clearBtn').addEventListener('click', () => {
     if (!confirm('Erase all pets and food memory saved on this device?')) return;
     store.clearAll();
@@ -358,6 +479,7 @@ function boot() {
     $<HTMLFormElement>('calcForm').reset();
     renderProfiles();
     $('storageMsg').textContent = 'All saved data erased from this device.';
+    toast('All saved data erased.');
   });
 
   renderProfiles();
