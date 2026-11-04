@@ -1,12 +1,12 @@
 import './styles.css';
-import { calculate, validate, type CalcInput, type CalcResult, type Range } from '../lib/formulas';
-import { citationList, CITATIONS } from '../lib/citations';
-import { cupFraction, lbToKg, mlToFlOz, ozToG, parseNum } from '../lib/units';
-import type { FormValues, LocalPet } from './types';
-import * as store from './storage';
-import { mealsIcs, reorderIcs, download } from './ics';
-import { track } from './analytics';
-import { FOODS, addToCart } from './catalog';
+import { calculate, validate, type CalcInput, type CalcResult, type Range } from '../lib/formulas.js';
+import { citationList, CITATIONS } from '../lib/citations.js';
+import { cupFraction, lbToKg, mlToFlOz, ozToG, parseNum } from '../lib/units.js';
+import type { FormValues, LocalPet } from './types.js';
+import * as store from './storage.js';
+import { mealsIcs, reorderIcs, download } from './ics.js';
+import { track } from './analytics.js';
+import { FOODS, addToCart } from './catalog.js';
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const esc = (s: string) =>

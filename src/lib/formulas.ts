@@ -1,5 +1,5 @@
-import type { CitationKey } from './citations';
-import { cupFraction } from './units';
+import type { CitationKey } from './citations.js';
+import { cupFraction } from './units.js';
 
 export type AgeUnit = 'weeks' | 'months' | 'years';
 export type AdultStatus = 'neutered' | 'intact' | 'obesity_prone';

@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { renderPage } from '../src/server/render';
-import { verifyProxySignature } from '../src/server/shopify-proxy';
+import { renderPage } from '../src/server/render.js';
+import { verifyProxySignature } from '../src/server/shopify-proxy.js';
 
 /**
  * Shopify App Proxy target: https://<project>.vercel.app/calculator

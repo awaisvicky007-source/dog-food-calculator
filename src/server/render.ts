@@ -1,5 +1,5 @@
-import { CITATIONS, citationList } from '../lib/citations';
-import { FAQ } from '../content/faq';
+import { CITATIONS, citationList } from '../lib/citations.js';
+import { FAQ } from '../content/faq.js';
 
 export interface RenderOptions {
   cssUrl?: string;

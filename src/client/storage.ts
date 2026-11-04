@@ -1,4 +1,4 @@
-import type { FormValues, LocalPet } from './types';
+import type { FormValues, LocalPet } from './types.js';
 
 /** Device-only persistence (FR-20..24). Nothing here ever touches the network. */
 const K = { pets: 'pv.pets.v1', foods: 'pv.foods.v1', history: 'pv.history.v1' } as const;
