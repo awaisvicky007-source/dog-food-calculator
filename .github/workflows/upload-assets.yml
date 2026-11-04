@@ -1,0 +1,30 @@
+name: Upload assets to Shopify and promote
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  repository_dispatch:
+    types: [shopify-theme-published]   # only needed when ASSET_HOME=theme
+concurrency: { group: assets, cancel-in-progress: false }
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run ci
+      # Any failure below stops the job, so Vercel keeps serving the previous good build (AC-21).
+      - run: npm run upload-assets
+        env:
+          SHOPIFY_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE_DOMAIN }}
+          SHOPIFY_ADMIN_TOKEN: ${{ secrets.SHOPIFY_ADMIN_TOKEN }}
+          ASSET_HOME: ${{ vars.ASSET_HOME || 'files' }}
+          SHOPIFY_THEME_ID: ${{ secrets.SHOPIFY_THEME_ID }}
+      - run: npm run refresh-asset-urls
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          VERCEL_DEPLOY_HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}

@@ -1,0 +1,9 @@
+{
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/calculator", "destination": "/api/calculator" },
+    { "source": "/calculator/(.*)", "destination": "/api/calculator" }
+  ]
+}
