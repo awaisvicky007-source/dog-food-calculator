@@ -16,8 +16,10 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   const rawSecret = process.env.SHOPIFY_API_SECRET ?? '';
   const secret = rawSecret.trim();
 
-  // 🔍 DEBUG — hit /calculator?__debug=1 to get diagnostics as JSON (no signature required)
-  if (req.query.__debug === '1') {
+  // 🔍 DEBUG — hit /calculator?__debug=1 to get diagnostics as JSON (no signature required).
+  // DEV/PREVIEW ONLY: this returns the correct HMAC for arbitrary queries, so it must
+  // never be reachable in production (would act as a signing oracle).
+  if (req.query.__debug === '1' && !isProd) {
     const q = (req.query ?? {}) as Record<string, unknown>;
     const sig = q.signature;
     const signatureString = typeof sig === 'string' ? sig : null;
@@ -38,32 +40,36 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       );
     } catch { /* ignore */ }
 
-    res.status(200).setHeader('Cache-Control', 'no-store').json({
-      url: req.url,
-      queryKeys: Object.keys(q).sort(),
-      queryFull: q,
-      signatureReceived: signatureString,
-      signatureType: Array.isArray(sig) ? 'array' : typeof sig,
-      signatureLength: signatureString?.length ?? 0,
-      expectedWithoutDebug,
-      expectedWithDebug,
-      matchesWithoutDebug: signatureString !== null && signatureString === expectedWithoutDebug,
-      matchesWithDebug: signatureString !== null && signatureString === expectedWithDebug,
+    res.status(200)
+      .setHeader('Cache-Control', 'no-store')
+      .setHeader('X-Robots-Tag', 'noindex,nofollow')
+      .json({
+        url: req.url,
+        queryKeys: Object.keys(q).sort(),
+        queryFull: q,
+        signatureRaw: sig,
+        signatureReceived: signatureString,
+        signatureType: Array.isArray(sig) ? 'array' : typeof sig,
+        signatureLength: signatureString?.length ?? 0,
+        expectedWithoutDebug,
+        expectedWithDebug,
+        matchesWithoutDebug: signatureString !== null && signatureString === expectedWithoutDebug,
+        matchesWithDebug: signatureString !== null && signatureString === expectedWithDebug,
 
-      secretPresent: rawSecret.length > 0,
-      secretRawLength: rawSecret.length,
-      secretTrimmedLength: secret.length,
-      secretHadWhitespace: rawSecret !== secret,
-      secretFirstCharCode: secret.length > 0 ? secret.charCodeAt(0) : null,
-      secretLastCharCode: secret.length > 0 ? secret.charCodeAt(secret.length - 1) : null,
+        secretPresent: rawSecret.length > 0,
+        secretRawLength: rawSecret.length,
+        secretTrimmedLength: secret.length,
+        secretHadWhitespace: rawSecret !== secret,
+        secretFirstCharCode: secret.length > 0 ? secret.charCodeAt(0) : null,
+        secretLastCharCode: secret.length > 0 ? secret.charCodeAt(secret.length - 1) : null,
 
-      cssUrlSet: !!process.env.ASSET_CSS_URL,
-      jsUrlSet: !!process.env.ASSET_JS_URL,
-      cssUrlHost: process.env.ASSET_CSS_URL ? safeHost(process.env.ASSET_CSS_URL) : null,
-      jsUrlHost: process.env.ASSET_JS_URL ? safeHost(process.env.ASSET_JS_URL) : null,
-      env,
-      isProd,
-    });
+        cssUrlSet: !!process.env.ASSET_CSS_URL,
+        jsUrlSet: !!process.env.ASSET_JS_URL,
+        cssUrlHost: process.env.ASSET_CSS_URL ? safeHost(process.env.ASSET_CSS_URL) : null,
+        jsUrlHost: process.env.ASSET_JS_URL ? safeHost(process.env.ASSET_JS_URL) : null,
+        env,
+        isProd,
+      });
     return;
   }
 
