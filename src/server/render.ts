@@ -319,7 +319,7 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
 <section class="content card" aria-labelledby="calories-h">
   <h2 id="calories-h">How many calories does your dog need?</h2>
   <p>Daily calories for dogs follow one published formula. Resting energy (RER) is <strong>70 × body weight in kg raised to the power 0.75</strong>. Then multiply RER by a life-stage factor to get maintenance energy (MER) — the actual daily calorie target: <strong>1.6</strong> for neutered adults, <strong>1.8</strong> for intact adults, <strong>1.4</strong> for obesity-prone or very inactive dogs, <strong>2×</strong> for puppies over 4 months, and <strong>3×</strong> for puppies under 4 months.</p>
-  <p>For example: a 30 lb (13.6 kg) neutered adult has an RER of about 496 kcal, and an MER of 496 × 1.6 = <strong>794 kcal per day</strong>. A 60 lb neutered adult lands near 1,334 kcal; a 10 lb neutered adult near 394 kcal. The calculator above does this math for any weight and age you enter.</p>
+  <p>For example: a 30 lb (13.6 kg) neutered adult has an RER of about 496 kcal, and an MER of 496 × 1.6 = <strong>794 kcal per day</strong>. A 60 lb neutered adult lands near 1,334 kcal; a 10 lb neutered adult near 348 kcal. The calculator above does this math for any weight and age you enter.</p>
   <p>These formulas come from the <a href="${CITATIONS.merck_energy.url}" target="_blank" rel="noopener noreferrer">Merck Veterinary Manual</a>, which is the reference veterinarians use. AAHA’s 2021 nutrition guideline publishes a small range around each point value (1.4–1.6 × RER for neutered adults); the calculator uses Merck’s point value and notes the range so you can adjust with your vet.</p>
 </section>
 
@@ -328,11 +328,11 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
   <p>Cups per day depend on your dog’s weight <em>and</em> the calorie density of the food. That’s why the calculator asks for kcal per cup from your bag — the same weight of dog needs different portions depending on whether the food is 300 or 400 kcal/cup.</p>
   <p>Rough guide using a typical dry food of 350 kcal/cup, neutered adults, 2 meals/day:</p>
   <ul>
-    <li><strong>10 lb dog</strong> (≈ 394 kcal/day): about 1.1 cups/day · 0.55 cups per meal</li>
-    <li><strong>25 lb dog</strong> (≈ 699 kcal/day): about 2.0 cups/day · 1.0 cups per meal</li>
-    <li><strong>50 lb dog</strong> (≈ 1,172 kcal/day): about 3.4 cups/day · 1.7 cups per meal</li>
-    <li><strong>75 lb dog</strong> (≈ 1,606 kcal/day): about 4.6 cups/day · 2.3 cups per meal</li>
-    <li><strong>100 lb dog</strong> (≈ 2,028 kcal/day): about 5.8 cups/day · 2.9 cups per meal</li>
+    <li><strong>10 lb dog</strong> (≈ 348 kcal/day): about 1.0 cups/day · 0.5 cups per meal</li>
+    <li><strong>25 lb dog</strong> (≈ 692 kcal/day): about 2.0 cups/day · 1.0 cups per meal</li>
+    <li><strong>50 lb dog</strong> (≈ 1,164 kcal/day): about 3.3 cups/day · 1.7 cups per meal</li>
+    <li><strong>75 lb dog</strong> (≈ 1,578 kcal/day): about 4.5 cups/day · 2.3 cups per meal</li>
+    <li><strong>100 lb dog</strong> (≈ 1,957 kcal/day): about 5.6 cups/day · 2.8 cups per meal</li>
   </ul>
   <p>For an exact figure, enter your dog’s weight and your food’s kcal/cup in the calculator above. For detailed portion tables by weight and life stage, see our <a href="${BLOG_PORTION}">dog feeding portion guide by weight and age</a>. For a breed-specific example, our <a href="${BLOG_LAB}">Labrador Retriever feeding chart</a> shows cups per day at every age.</p>
 </section>
