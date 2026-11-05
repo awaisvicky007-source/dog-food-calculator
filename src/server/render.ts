@@ -12,7 +12,6 @@ export interface RenderOptions {
 export const CANONICAL_ORIGIN = 'https://www.pawvortex.com';
 export const CANONICAL_PATH = '/tools/dog-food-calculator';
 
-// Storefront entity IDs (from pawvortex.com Organization schema)
 const ORG_ID = 'https://www.pawvortex.com/#organization';
 const SITE_ID = 'https://www.pawvortex.com/#website';
 const LOGO_URL = 'https://www.pawvortex.com/cdn/shop/files/pawvortex-logo.webp';
@@ -25,15 +24,18 @@ const OG_IMAGE_ALT = 'PawVortex Dog Food Calculator — how many calories and cu
 const OG_IMAGE_CAPTION =
   'Screenshot of the PawVortex Dog Food Calculator with weight, age, and food label inputs';
 
-// ── Live article URLs (verified 2026-11-04) ──
+const BLOG_INDEX = 'https://www.pawvortex.com/blogs/dog-care';
 const BLOG_NUTRITION = 'https://www.pawvortex.com/blogs/dog-care/complete-dog-nutrition-guide';
 const BLOG_SENIOR = 'https://www.pawvortex.com/blogs/dog-care/senior-dog-nutrition-guide';
 const BLOG_PUPPY = 'https://www.pawvortex.com/blogs/dog-care/puppy-feeding-schedule-guide';
 const BLOG_PORTION = 'https://www.pawvortex.com/blogs/dog-care/how-much-to-feed-dog-portion-guide';
-const BLOG_SUPPLIES = 'https://www.pawvortex.com/blogs/news/best-puppy-food-and-feeding-supplies-online-2026';
-const BLOG_LAB = 'https://www.pawvortex.com/blogs/dog-care/labrador-retriever-feeding-guide-how-much-how-often-to-feed';
+const BLOG_SUPPLIES =
+  'https://www.pawvortex.com/blogs/news/best-puppy-food-and-feeding-supplies-online-2026';
+const BLOG_LAB =
+  'https://www.pawvortex.com/blogs/dog-care/labrador-retriever-feeding-guide-how-much-how-often-to-feed';
 
-const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const esc = (s: string) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const jsonLd = (o: unknown) => JSON.stringify(o).replace(/</g, '\\u003c');
 
 function schema(origin: string, path: string) {
@@ -47,17 +49,34 @@ function schema(origin: string, path: string) {
     legalName: 'AL WAHAB MERCHANDISING INC',
     url: `${origin}/`,
     foundingDate: '2023',
-    description: 'PawVortex is a USA-based online pet supply store offering smart feeders, calming treats, dog and cat toys, pet food, orthopedic beds, grooming kits, and pet accessories. Free shipping on US orders over $35.',
-    logo: { '@type': 'ImageObject', '@id': `${origin}/#logo`, url: LOGO_URL, width: 150, height: 50, caption: 'PawVortex — Premium Pet Supplies Online USA' },
+    description:
+      'PawVortex is a USA-based online pet supply store offering smart feeders, calming treats, dog and cat toys, pet food, orthopedic beds, grooming kits, and pet accessories. Free shipping on US orders over $35.',
+    logo: {
+      '@type': 'ImageObject',
+      '@id': `${origin}/#logo`,
+      url: LOGO_URL,
+      width: 150,
+      height: 50,
+      caption: 'PawVortex — Premium Pet Supplies Online USA',
+    },
     image: { '@id': `${origin}/#logo` },
-    address: { '@type': 'PostalAddress', streetAddress: '8517 Brushy Creek Trail', addressLocality: 'Fort Worth', addressRegion: 'TX', postalCode: '76118', addressCountry: 'US' },
-    contactPoint: [{ '@type': 'ContactPoint', email: 'hello@pawvortex.com', telephone: '+1-682-456-7090', contactType: 'customer service', areaServed: 'US', availableLanguage: 'English' }],
-    sameAs: [
-      'https://www.facebook.com/PawVortex',
-      'https://www.instagram.com/paw_vortex/',
-      'https://www.youtube.com/@PawVortexYoutube',
-      'https://www.tiktok.com/@pawvortex',
-      'https://www.pinterest.com/pawvortex/',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: '8517 Brushy Creek Trail',
+      addressLocality: 'Fort Worth',
+      addressRegion: 'TX',
+      postalCode: '76118',
+      addressCountry: 'US',
+    },
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        email: 'hello@pawvortex.com',
+        telephone: '+1-682-456-7090',
+        contactType: 'customer service',
+        areaServed: 'US',
+        availableLanguage: 'English',
+      },
     ],
   };
 
@@ -82,7 +101,8 @@ function schema(origin: string, path: string) {
     '@id': `${url}#webapp`,
     name: 'PawVortex Dog Food Calculator',
     url,
-    description: 'Free US dog food calculator: daily calories (RER × life-stage multiplier), cups, grams, meals, treats, and water — with every step shown. No sign-up, no account.',
+    description:
+      'Free US dog food calculator: daily calories (RER × life-stage multiplier), cups, grams, meals, treats, and water — with every step shown. No sign-up, no account.',
     applicationCategory: 'UtilitiesApplication',
     applicationSubCategory: 'PetNutritionCalculator',
     operatingSystem: 'Any (web browser)',
@@ -141,20 +161,27 @@ export function renderPage(o: RenderOptions): string {
   const path = o.path ?? CANONICAL_PATH;
 
   const title = 'Dog Food Calculator — Calories, Cups & Meals | PawVortex';
-  const desc = 'Free US dog food calculator. Get daily calories, cups, grams, meals, treats and water — every step shown, sources cited. No sign-up, no account.';
+  const desc =
+    'Free US dog food calculator. Get daily calories, cups, grams, meals, treats and water — every step shown, sources cited. No sign-up, no account.';
   const h1 = 'Dog Food Calculator: Calories, Cups & Meals for Your Dog';
 
   const sources = citationList(Object.keys(CITATIONS) as (keyof typeof CITATIONS)[])
-    .map((c) => `<li><span class="org">${esc(c.org)}</span> - <a href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">${esc(c.title)}</a></li>`)
+    .map(
+      (c) =>
+        `<li><span class="org">${esc(c.org)}</span> - <a href="${esc(c.url)}" target="_blank" rel="noopener noreferrer">${esc(c.title)}</a></li>`,
+    )
     .join('');
 
-  const faq = FAQ.map((f) => `<details class="faq"><summary>${esc(f.q)}</summary><p>${f.a}</p></details>`).join('');
+  const faq = FAQ.map(
+    (f) => `<details class="faq"><summary>${esc(f.q)}</summary><p>${f.a}</p></details>`,
+  ).join('');
 
   const bcs = [`<option value="">Not sure / skip</option>`]
     .concat(
       Array.from({ length: 9 }, (_, i) => {
         const n = i + 1;
-        const hint = n <= 3 ? ' - thin' : n <= 5 ? ' - ideal' : n === 6 ? ' - a little heavy' : ' - heavy';
+        const hint =
+          n <= 3 ? ' - thin' : n <= 5 ? ' - ideal' : n === 6 ? ' - a little heavy' : ' - heavy';
         return opt(String(n), `${n}${hint}`);
       }),
     )
@@ -293,12 +320,12 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
   <h2 id="calories-h">How many calories does your dog need?</h2>
   <p>Daily calories for dogs follow one published formula. Resting energy (RER) is <strong>70 × body weight in kg raised to the power 0.75</strong>. Then multiply RER by a life-stage factor to get maintenance energy (MER) — the actual daily calorie target: <strong>1.6</strong> for neutered adults, <strong>1.8</strong> for intact adults, <strong>1.4</strong> for obesity-prone or very inactive dogs, <strong>2×</strong> for puppies over 4 months, and <strong>3×</strong> for puppies under 4 months.</p>
   <p>For example: a 30 lb (13.6 kg) neutered adult has an RER of about 496 kcal, and an MER of 496 × 1.6 = <strong>794 kcal per day</strong>. A 60 lb neutered adult lands near 1,334 kcal; a 10 lb neutered adult near 394 kcal. The calculator above does this math for any weight and age you enter.</p>
-  <p>These formulas come from the <a href="${CITATIONS.merck_energy.url}" target="_blank" rel="noopener noreferrer">Merck Veterinary Manual</a>, which is the reference veterinarians use. AAHA\u2019s 2021 nutrition guideline publishes a small range around each point value (1.4–1.6 × RER for neutered adults); the calculator uses Merck\u2019s point value and notes the range so you can adjust with your vet.</p>
+  <p>These formulas come from the <a href="${CITATIONS.merck_energy.url}" target="_blank" rel="noopener noreferrer">Merck Veterinary Manual</a>, which is the reference veterinarians use. AAHA’s 2021 nutrition guideline publishes a small range around each point value (1.4–1.6 × RER for neutered adults); the calculator uses Merck’s point value and notes the range so you can adjust with your vet.</p>
 </section>
 
 <section class="content card" aria-labelledby="by-weight-h">
   <h2 id="by-weight-h">How much food to feed your dog — by weight and age</h2>
-  <p>Cups per day depend on your dog\u2019s weight <em>and</em> the calorie density of the food. That\u2019s why the calculator asks for kcal per cup from your bag — the same weight of dog needs different portions depending on whether the food is 300 or 400 kcal/cup.</p>
+  <p>Cups per day depend on your dog’s weight <em>and</em> the calorie density of the food. That’s why the calculator asks for kcal per cup from your bag — the same weight of dog needs different portions depending on whether the food is 300 or 400 kcal/cup.</p>
   <p>Rough guide using a typical dry food of 350 kcal/cup, neutered adults, 2 meals/day:</p>
   <ul>
     <li><strong>10 lb dog</strong> (≈ 394 kcal/day): about 1.1 cups/day · 0.55 cups per meal</li>
@@ -307,21 +334,21 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
     <li><strong>75 lb dog</strong> (≈ 1,606 kcal/day): about 4.6 cups/day · 2.3 cups per meal</li>
     <li><strong>100 lb dog</strong> (≈ 2,028 kcal/day): about 5.8 cups/day · 2.9 cups per meal</li>
   </ul>
-  <p>For an exact figure, enter your dog\u2019s weight and your food\u2019s kcal/cup in the calculator above. For detailed portion tables by weight and life stage, see our <a href="${BLOG_PORTION}">dog feeding portion guide by weight and age</a>. For a breed-specific example, our <a href="${BLOG_LAB}">Labrador Retriever feeding chart</a> shows cups per day at every age.</p>
+  <p>For an exact figure, enter your dog’s weight and your food’s kcal/cup in the calculator above. For detailed portion tables by weight and life stage, see our <a href="${BLOG_PORTION}">dog feeding portion guide by weight and age</a>. For a breed-specific example, our <a href="${BLOG_LAB}">Labrador Retriever feeding chart</a> shows cups per day at every age.</p>
 </section>
 
 <section class="content card" aria-labelledby="wet-dry-h">
   <h2 id="wet-dry-h">How much wet food, dry food, or mixed feeding?</h2>
   <p>The daily calorie target is the same regardless of food format. What changes is how you convert those calories into cans, cups, or grams.</p>
   <p><strong>Dry food:</strong> divide daily calories by kcal per cup (typically 300–500 kcal/cup). A 794 kcal dog with a 350 kcal/cup kibble eats ~2.27 cups/day.</p>
-  <p><strong>Wet food:</strong> wet food is much less calorie-dense — typically <strong>70–120 kcal per 100 g</strong>, or about <strong>200–400 kcal per 13 oz (370 g) can</strong>. Divide daily calories by the can\u2019s total kcal to get cans/day. A 794 kcal dog eating a 300 kcal/can wet food eats about 2.6 cans per day. Always check the can\u2019s calorie statement — it varies by brand and recipe.</p>
+  <p><strong>Wet food:</strong> wet food is much less calorie-dense — typically <strong>70–120 kcal per 100 g</strong>, or about <strong>200–400 kcal per 13 oz (370 g) can</strong>. Divide daily calories by the can’s total kcal to get cans/day. A 794 kcal dog eating a 300 kcal/can wet food eats about 2.6 cans per day. Always check the can’s calorie statement — it varies by brand and recipe.</p>
   <p><strong>Mixed (dry + wet):</strong> add the calories from both sources and keep the total equal to your daily target. E.g., 400 kcal from wet + 400 kcal from dry = 800 kcal for a 794 kcal target.</p>
   <p><strong>Water adjustment:</strong> wet food is 70–85% water. If your dog eats mostly wet food, reduce the drinking-water target accordingly — a dog on 100% wet food may drink very little. For portion and calorie context, browse our <a href="https://www.pawvortex.com/collections/dog-food">dog food collection</a> and <a href="https://www.pawvortex.com/collections/wet-dog-food">wet dog food collection</a>.</p>
 </section>
 
 <section class="content card" aria-labelledby="bag-last-h">
   <h2 id="bag-last-h">How long will your dog's food last?</h2>
-  <p>Enter your bag size in the Food label section above and the calculator shows an estimated days-per-bag figure. The math: bag weight in grams ÷ daily grams consumed. Daily grams come from daily calories ÷ the food\u2019s kcal per kg.</p>
+  <p>Enter your bag size in the Food label section above and the calculator shows an estimated days-per-bag figure. The math: bag weight in grams ÷ daily grams consumed. Daily grams come from daily calories ÷ the food’s kcal per kg.</p>
   <p>For example: a 30 lb (13,600 g) bag of a 3,500 kcal/kg food, feeding a 794 kcal/day dog: daily grams = 794 ÷ 3.5 ≈ 227 g; bag lasts 13,600 ÷ 227 ≈ 60 days. Add treats within the 10% budget and the food amount drops slightly, extending the bag by a few days.</p>
   <p>Once the calculator shows your days-per-bag, you can compare larger bags against smaller ones for a per-day cost — usually a 24–30 lb bag is the best value for medium and large dogs, smaller bags for small dogs to keep food fresh.</p>
 </section>
@@ -332,7 +359,7 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
   <p><strong>What this calculator does not assess:</strong> the nutrient balance of a homemade or raw recipe. A complete-and-balanced diet needs the right ratios of protein, fat, calcium, phosphorus, and the full vitamin/mineral profile — measured by AAFCO or NRC standards and verified by a board-certified veterinary nutritionist. Neither a calorie target nor any online tool substitutes for that review.</p>
   <p><strong>Recommended workflow for homemade or raw:</strong></p>
   <ol>
-    <li>Use this calculator to establish your dog\u2019s daily calorie target.</li>
+    <li>Use this calculator to establish your dog’s daily calorie target.</li>
     <li>Choose a recipe from a veterinary nutritionist or a board-certified source — not a generic internet recipe.</li>
     <li>Confirm with your veterinarian or nutritionist that the recipe meets AAFCO or NRC profiles at the calorie amount above.</li>
     <li>Re-check weight every few weeks and adjust the calorie target with your vet if needed.</li>
@@ -346,10 +373,10 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
   <ol>
     <li><strong>Resting energy:</strong> RER = 70 × (body weight in kg) <sup>0.75</sup> — from the Merck Veterinary Manual.</li>
     <li><strong>Life-stage multiplier:</strong> 1.6 neutered adult · 1.8 intact adult · 1.4 obesity-prone · 2–3 puppies and working dogs — same source.</li>
-    <li><strong>Convert to cups or grams:</strong> daily kcal ÷ your food\u2019s kcal per cup (or kcal/kg) — AAFCO label convention.</li>
+    <li><strong>Convert to cups or grams:</strong> daily kcal ÷ your food’s kcal per cup (or kcal/kg) — AAFCO label convention.</li>
   </ol>
   <p>The treat budget is 10% of daily calories (WSAVA guideline). The water target is a drinking-water range of 44–66 mL/kg/day (Merck). Everything runs in your browser — no pet name, weight, or plan ever leaves your device.</p>
-  <p><strong>About the multipliers.</strong> Merck publishes a point value; AAHA\u2019s 2021 nutrition guideline publishes a range around that point value. If your dog gains weight on the point value shown, switch to \u201cprone to weight gain\u201d (1.4× RER) — or ask your veterinarian to set a target weight.</p>
+  <p><strong>About the multipliers.</strong> Merck publishes a point value; AAHA’s 2021 nutrition guideline publishes a range around that point value. If your dog gains weight on the point value shown, switch to “prone to weight gain” (1.4× RER) — or ask your veterinarian to set a target weight.</p>
   <p><strong>About water.</strong> The figure is <em>drinking water</em>, not total fluid. It does not include water already in wet food; if you feed <a href="https://www.pawvortex.com/collections/wet-dog-food">wet or raw</a>, reduce the target accordingly.</p>
 </section>
 
@@ -383,6 +410,7 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
 
   <h3>Read more</h3>
   <ul>
+    <li><a href="${BLOG_INDEX}">Dog care blog</a> — every feeding, weight-management and nutrition article on PawVortex.</li>
     <li><a href="${BLOG_PORTION}">How much should I feed my dog? Portion guide by weight and age</a> — the full feeding-chart companion to this calculator.</li>
     <li><a href="${BLOG_PUPPY}">Puppy feeding schedule: how often &amp; how much by age</a> — meal frequency and cups for 8 weeks to 12 months.</li>
     <li><a href="${BLOG_SENIOR}">Senior dog nutrition guide</a> — adjusting calories, protein and joint support for dogs over 7.</li>
