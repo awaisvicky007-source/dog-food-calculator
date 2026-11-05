@@ -241,7 +241,7 @@ export function calculate(input: CalcInput): CalcResult {
       label: 'Water range (drinking)',
       formula: `44 \u00d7 ${kg.toFixed(2)}  to  66 \u00d7 ${kg.toFixed(2)}`,
       result: `${Math.round(water.lowMl)}-${Math.round(water.highMl)} mL/day`,
-      cite: 'merck_fluids',
+      cite: 'merck_energy',
     },
   ];
   if (exact)

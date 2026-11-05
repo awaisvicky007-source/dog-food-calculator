@@ -36,43 +36,43 @@ export const CITATIONS: Record<CitationKey, Citation> = {
   merck_energy: c(
     'merck_energy',
     'Merck Veterinary Manual',
-    'Nutritional requirements of small animals - daily maintenance energy requirements',
+    'Nutritional requirements of small animals — daily maintenance energy requirements and water intake',
     'https://www.merckvetmanual.com/management-and-nutrition/nutrition-small-animals/nutritional-requirements-of-small-animals',
   ),
   merck_puppy_feeding: c(
     'merck_puppy_feeding',
     'Merck Veterinary Manual',
-    'Feeding schedule for puppies',
-    'https://www.merckvetmanual.com/dog-owners/routine-care-and-breeding-of-dogs/feeding-and-nutrition-of-dogs',
+    'Feeding and nutrition of dogs — feeding schedules for puppies and adults',
+    'https://www.merckvetmanual.com/management-and-nutrition/nutrition-small-animals/dog-and-cat-foods',
   ),
   merck_fluids: c(
     'merck_fluids',
     'Merck Veterinary Manual',
-    'Maintenance fluid plan',
-    'https://www.merckvetmanual.com/management-and-nutrition/fluid-therapy/fluid-therapy-in-small-animals',
+    'Maintenance fluid plan in animals',
+    'https://www.merckvetmanual.com/therapeutics/fluid-therapy/maintenance-fluid-plan-in-animals',
   ),
   merck_food_hazards: c(
     'merck_food_hazards',
     'Merck Veterinary Manual',
     'Food hazards for dogs',
-    'https://www.merckvetmanual.com/toxicology/food-hazards/food-hazards-in-small-animals',
+    'https://www.merckvetmanual.com/special-pet-topics/poisoning/food-hazards',
   ),
   aafco_calories: c(
     'aafco_calories',
     'AAFCO',
-    'Pet food label calorie statement requirements',
-    'https://www.aafco.org/consumers/understanding-pet-food/',
+    'Pet food labeling requirements — calorie content statement',
+    'https://aafco.org/resources/startups/labeling-labeling-requirements/',
   ),
   fda_xylitol: c(
     'fda_xylitol',
-    'U.S. FDA - Center for Veterinary Medicine',
+    'U.S. FDA — Center for Veterinary Medicine',
     "Paws off xylitol; it's dangerous for dogs",
     'https://www.fda.gov/consumers/consumer-updates/paws-xylitol-its-dangerous-dogs',
   ),
   wsava_bcs: c(
     'wsava_bcs',
     'WSAVA',
-    'Body condition score (1-9 scale) - dogs',
+    'Body condition score (1–9 scale) — dogs',
     'https://wsava.org/wp-content/uploads/2020/01/Body-Condition-Score-Dog.pdf',
   ),
   wsava_nutrition: c(
@@ -85,7 +85,7 @@ export const CITATIONS: Record<CitationKey, Citation> = {
     'nrc_energy',
     'National Research Council (NRC)',
     'Nutrient requirements of dogs and cats',
-    'https://nap.nationalacademies.org/catalog/10668/nutrient-requirements-of-dogs-and-cats',
+    'https://www.nationalacademies.org/read/10668/chapter/1',
   ),
 };
 
