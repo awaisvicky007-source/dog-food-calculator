@@ -228,7 +228,14 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
 <a class="skip" href="#calc">Skip to calculator</a>
 <header class="hero">
   <div class="wrap">
-    <nav aria-label="Breadcrumb" class="crumbs"><a href="${origin}">PawVortex</a> / <a href="${origin}/tools">Tools</a> / <span>Dog Food Calculator</span></nav>
+    <div class="hero-top">
+      <nav aria-label="Breadcrumb" class="crumbs"><a href="${origin}">PawVortex</a> / <a href="${origin}/tools">Tools</a> / <span>Dog Food Calculator</span></nav>
+      <a href="https://account.pawvortex.com/" class="hero-signin" rel="noopener">
+        <img src="https://cdn.shopify.com/s/files/1/0689/8355/4214/files/pawvortex-signin-shop.webp?v=1794000556" width="24" height="24" alt="" loading="lazy">
+        <img src="https://cdn.shopify.com/s/files/1/0689/8355/4214/files/pawvortex-signin-google.webp?v=1794000556" width="24" height="24" alt="" loading="lazy">
+        <span>Sign in with Shop or Google</span>
+      </a>
+    </div>
     <h1>${esc(h1)}</h1>
     <p class="lead">Daily calories, cups, grams, meals, treats and water for your dog — with every step shown. Free. No sign-up. Your details stay on your device.</p>
     <ul class="pills"><li>No account</li><li>Show-the-math</li><li>Veterinary &amp; government sources only</li></ul>

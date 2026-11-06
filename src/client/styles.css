@@ -1,24 +1,27 @@
 /* ============================================================
-   PawVortex Dog Food Calculator — styles
-   Brand palette (matches pawvortex.com storefront):
-     Amber primary:    #FFB61A
-     Amber dark:       #FF8A00
-     Amber light:      #FFCC33
-     Button gradient:  linear-gradient(90deg, #FF8A00, #FFCC33)
-     Button text:      #1A0A00
-     Page bg:          #FFFEF2
-     Card bg:          #FFFFFF
-     Card border:      #F0EDE0
-     Dark text:        #1A1A1A
-     Muted text:       #5E5E5E
-     Danger red:       #B42318
+   PawVortex Dog Food Calculator — WCAG AA compliant
+   ────────────────────────────────────────────────────────────
+   Color strategy:
+   • Amber #FFB61A / #FF8A00 / #FFCC33 → backgrounds, borders,
+     gradients, button fills — NEVER text on light backgrounds
+   • Dark amber #8F4D00 → all text links, citation refs,
+     interactive labels — 6.4:1 on cream (WCAG AA + AAA-lg)
+   • Ink #1A1A1A → body text
+   • Ink-soft #5E5E5E → muted text — 6.4:1 on cream (AA)
    ============================================================ */
 
 :root {
+  /* Brand (decorative) */
   --pv-amber: #FFB61A;
   --pv-amber-dark: #FF8A00;
   --pv-amber-light: #FFCC33;
   --pv-amber-soft: #FFF5E6;
+
+  /* Text-safe amber (WCAG AA on any of our light backgrounds) */
+  --pv-amber-text: #8F4D00;        /* 6.4:1 on cream */
+  --pv-amber-text-hover: #6B3900;  /* 9.6:1 on cream */
+
+  /* Neutrals */
   --pv-button-text: #1A0A00;
   --pv-bg: #FFFEF2;
   --pv-card: #FFFFFF;
@@ -26,6 +29,8 @@
   --pv-ink: #1A1A1A;
   --pv-ink-soft: #5E5E5E;
   --pv-danger: #B42318;
+  --pv-danger-text: #7A1210;
+
   --pv-radius: 10px;
   --pv-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
@@ -46,7 +51,6 @@ body {
 .skip {
   position: absolute;
   left: -9999px;
-  top: auto;
   width: 1px;
   height: 1px;
   overflow: hidden;
@@ -77,17 +81,67 @@ body {
   border-bottom: 1px solid var(--pv-border);
   padding: 40px 0 32px;
 }
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.hero-top .crumbs {
+  margin-bottom: 0;
+}
 
+/* Storefront-parity sign-in link (approved exception to no-login test) */
+.hero-signin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--pv-border);
+  border-radius: 6px;
+  background: #FFFFFF;
+  color: var(--pv-ink);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+.hero-signin:hover {
+  border-color: var(--pv-amber);
+  background: var(--pv-amber-soft);
+  color: var(--pv-amber-text-hover);
+}
+.hero-signin img {
+  width: 24px;
+  height: 24px;
+  display: block;
+  border-radius: 3px;
+}
+@media (max-width: 640px) {
+  .hero-signin span {
+    display: none;
+  }
+  .hero-signin {
+    padding: 6px;
+  }
+}
 .crumbs {
   font-size: 13px;
   color: var(--pv-ink-soft);
   margin-bottom: 12px;
 }
 .crumbs a {
-  color: var(--pv-amber-dark);
-  text-decoration: none;
+  color: var(--pv-amber-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
-.crumbs a:hover { text-decoration: underline; }
+.crumbs a:hover {
+  color: var(--pv-amber-text-hover);
+}
 
 .hero h1 {
   font-size: 36px;
@@ -127,7 +181,7 @@ body {
 }
 .pills li::before {
   content: '✓';
-  color: var(--pv-amber-dark);
+  color: var(--pv-amber-text);
   font-weight: 700;
 }
 
@@ -167,6 +221,19 @@ body {
   font-weight: 600;
 }
 
+/* Inline body links inside cards and content */
+.card a,
+.content a {
+  color: var(--pv-amber-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+.card a:hover,
+.content a:hover {
+  color: var(--pv-amber-text-hover);
+}
+
 /* ---------- Form ---------- */
 .field { margin-bottom: 16px; }
 .field label {
@@ -199,7 +266,7 @@ body {
   border-color: var(--pv-amber);
   box-shadow: 0 0 0 3px rgba(255,182,26,0.22);
 }
-.field input::placeholder { color: #B8B8B8; }
+.field input::placeholder { color: #767676; } /* 4.5:1 on white — WCAG AA */
 
 .row {
   display: grid;
@@ -242,7 +309,7 @@ details.more summary::after {
   top: 50%;
   transform: translateY(-50%);
   font-size: 20px;
-  color: var(--pv-amber-dark);
+  color: var(--pv-amber-text);
   font-weight: 600;
 }
 details.more[open] summary::after { content: '−'; }
@@ -255,7 +322,7 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
   border-radius: 8px;
   padding: 12px 16px;
   margin-bottom: 16px;
-  color: var(--pv-danger);
+  color: var(--pv-danger-text);
 }
 .errors p { margin: 4px 0; font-size: 14px; }
 
@@ -278,6 +345,7 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
 }
 .btn:active { transform: scale(0.98); }
 
+/* Amber gradient — SAFE because text is #1A0A00 (12:1 on lightest stop, 7.9:1 on darkest) */
 .btn.primary {
   background: linear-gradient(90deg, #FF8A00, #FFCC33);
   color: var(--pv-button-text);
@@ -298,12 +366,13 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
 .btn.ghost:hover {
   border-color: var(--pv-amber);
   background: var(--pv-amber-soft);
+  color: var(--pv-amber-text-hover);
 }
 
 .btn.danger {
   background: #fff;
   border: 1px solid #E5C0BC;
-  color: var(--pv-danger);
+  color: var(--pv-danger-text);
 }
 .btn.danger:hover {
   background: #FEF2F2;
@@ -346,13 +415,20 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
   color: var(--pv-ink);
   font-weight: 500;
   flex: 1;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.15s, color 0.15s;
 }
 .pet .link small {
   color: var(--pv-ink-soft);
   font-weight: 400;
   margin-left: 4px;
 }
-.pet .link:hover { color: var(--pv-amber-dark); }
+.pet .link:hover {
+  color: var(--pv-amber-text);
+  text-decoration-color: var(--pv-amber-text);
+}
 .pet .x {
   background: none;
   border: none;
@@ -364,7 +440,7 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
   border-radius: 4px;
 }
 .pet .x:hover {
-  color: var(--pv-danger);
+  color: var(--pv-danger-text);
   background: #FEF2F2;
 }
 
@@ -374,7 +450,7 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
   border: 1px solid #FFE0A3;
 }
 .side .danger-card h2 {
-  border-bottom-color: #FFAB0D;
+  border-bottom-color: var(--pv-amber);
   color: #7A4A00;
 }
 .side .danger-card p {
@@ -382,9 +458,20 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
   font-size: 14px;
   line-height: 1.55;
 }
-.side .danger-card a { color: #B25D00; font-weight: 500; }
+.side .danger-card a {
+  color: var(--pv-amber-text);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.side .danger-card a:hover {
+  color: var(--pv-amber-text-hover);
+}
 .side .danger-card strong { color: #7A4A00; }
-.side .danger-card sup a { font-size: 11px; text-decoration: none; }
+.side .danger-card sup a {
+  font-size: 11px;
+  text-decoration: underline;
+}
 
 /* ---------- Results ---------- */
 .results {
@@ -431,7 +518,7 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
 .notes li.warn {
   background: #FEF2F2;
   border-left-color: var(--pv-danger);
-  color: var(--pv-danger);
+  color: var(--pv-danger-text);
 }
 
 /* ---------- Stats grid ---------- */
@@ -503,10 +590,14 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
   border: 1px solid #FFE0A3;
 }
 .math sup a {
-  color: var(--pv-amber-dark);
+  color: var(--pv-amber-text);
   font-size: 11px;
-  text-decoration: none;
+  text-decoration: underline;
+  text-underline-offset: 1px;
   font-weight: 600;
+}
+.math sup a:hover {
+  color: var(--pv-amber-text-hover);
 }
 
 /* ---------- Details inside results ---------- */
@@ -531,7 +622,7 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
   content: '+';
   position: absolute;
   right: 0;
-  color: var(--pv-amber-dark);
+  color: var(--pv-amber-text);
   font-size: 18px;
   font-weight: 600;
 }
@@ -548,9 +639,20 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
   line-height: 1.5;
 }
 .sources li:last-child { border-bottom: none; }
-.sources a { color: var(--pv-amber-dark); text-decoration: none; word-break: break-word; }
-.sources a:hover { text-decoration: underline; }
-.sources .org { font-weight: 600; color: var(--pv-ink); margin-right: 4px; }
+.sources a {
+  color: var(--pv-amber-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-word;
+}
+.sources a:hover {
+  color: var(--pv-amber-text-hover);
+}
+.sources .org {
+  font-weight: 600;
+  color: var(--pv-ink);
+  margin-right: 4px;
+}
 
 /* ---------- Vet sheet ---------- */
 .vet-sheet {
@@ -572,8 +674,8 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
 /* ---------- Product recs ---------- */
 .tag {
   display: inline-block;
-  background: var(--pv-amber-soft);
-  color: var(--pv-amber-dark);
+  background: #FFE9BF;      /* slightly deeper amber tint for text contrast */
+  color: var(--pv-amber-text);
   font-size: 11px;
   font-weight: 700;
   padding: 2px 8px;
@@ -685,7 +787,7 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--pv-amber-dark);
+  color: var(--pv-amber-text);
   font-size: 20px;
   font-weight: 600;
 }
@@ -744,7 +846,7 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
   transform: translateY(0);
 }
 
-/* ---------- Print: clean plan only, brand colors muted ---------- */
+/* ---------- Print: clean plan, brand colors muted ---------- */
 @media print {
   body > header.hero,
   .skip,
