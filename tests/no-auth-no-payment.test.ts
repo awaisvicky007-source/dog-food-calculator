@@ -19,13 +19,21 @@ import { readFileSync } from 'node:fs';
  *
  * If a future change adds a login gate — "results only visible after sign-in",
  * "Save" prompts auth, checkout inside the tool — that WILL fail this test.
- * The exemption below is deliberately narrow: only the exact href and the
- * exact label of the storefront-parity link are ignored. Everything else is
- * still rejected.
+ * The exemption below strips the *entire* <a> element (href + class + contents)
+ * before checking, so the CSS class `hero-signin` can never leak through.
  * ──────────────────────────────────────────────────────────────────────────
  */
 const APPROVED_SIGNIN_HREF = 'https://account.pawvortex.com/';
-const APPROVED_SIGNIN_TEXT = /sign\s?-?in\s+with\s+shop\s+or\s+google/i;
+
+const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// Matches the entire <a href="APPROVED_HREF" ...>...</a> block, including nested
+// images and text. Strips class names too, so /sign\s?-?in/i cannot match
+// "hero-signin" after removal.
+const APPROVED_LINK_BLOCK = new RegExp(
+  `<a\\b[^>]*?href="${escapeRegex(APPROVED_SIGNIN_HREF)}"[^>]*>[\\s\\S]*?<\\/a>`,
+  'gi',
+);
 
 describe('no login / no payment UI (AC-15)', () => {
   const html = renderPage({ cssUrl: 'https://cdn.shopify.com/a.css', jsUrl: 'https://cdn.shopify.com/a.js' });
@@ -42,11 +50,15 @@ describe('no login / no payment UI (AC-15)', () => {
   });
 
   it('has no sign-up, log-in, account, or payment buttons/links — except the approved storefront-parity sign-in link', () => {
-    // Strip the one approved link (exact href + exact label) before asserting
-    const strippedControls = controls.replace(APPROVED_SIGNIN_TEXT, '');
+    // Strip the WHOLE approved <a>...</a> block (class, href, images, span text).
+    // This prevents the CSS class "hero-signin" from matching /sign\s?-?in/i.
+    const strippedControls = controls.replace(APPROVED_LINK_BLOCK, '');
+
     const unapprovedHrefs = hrefs.filter((h) => h !== APPROVED_SIGNIN_HREF);
 
-    expect(strippedControls).not.toMatch(/sign\s?-?up|log\s?-?in|sign\s?-?in|create (an )?account|checkout|buy now|pay now|subscribe/i);
+    expect(strippedControls).not.toMatch(
+      /sign\s?-?up|log\s?-?in|sign\s?-?in|create (an )?account|checkout|buy now|pay now|subscribe/i,
+    );
     unapprovedHrefs.forEach((h) => expect(h, h).not.toMatch(/\/(account|login|checkout|cart)(\/|$|\?)/i));
   });
 
