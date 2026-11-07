@@ -133,7 +133,13 @@ function renderResults(c: Current) {
     : stat('Grams per day', '\u2014', 'Add kcal/kg (or kcal/cup + grams/cup) from the bag');
 
   $('results').hidden = false;
+  document.body.classList.add('pv-has-results');
   $('results').innerHTML = `
+  <div class="pv-mobile-actions" role="region" aria-label="Quick actions">
+    <button class="btn primary" data-action="print" type="button">Save as PDF</button>
+    <button class="btn ghost" data-action="save" type="button">${c.petId ? 'Update' : 'Save'}</button>
+    <button class="btn ghost" data-action="copy" type="button">Copy</button>
+  </div>
   <div class="results-head">
     <h2>${esc(petName(v))}\u2019s plan</h2>
     <p class="muted">${esc(r.multiplierLabel)} \u00b7 ${r.weightKg.toFixed(1)} kg \u00b7 ${r.mealsPerDay} meals/day</p>
@@ -165,10 +171,12 @@ function renderResults(c: Current) {
   </details>
   <details><summary>Sources used for this plan</summary><ul class="sources">${cites}</ul></details>
 
-  <div class="btnrow actions">
+  <div class="btnrow actions actions-primary">
     <button class="btn primary" data-action="save" type="button">${c.petId ? 'Update saved pet' : 'Save to this device'}</button>
     <button class="btn ghost" data-action="copy" type="button">Copy results</button>
     <button class="btn ghost" data-action="print" type="button">Print / save as PDF</button>
+  </div>
+  <div class="btnrow actions actions-secondary">
     <button class="btn ghost" data-action="ics-meals" type="button">Feeding reminders (.ics)</button>
     ${days !== null ? `<button class="btn ghost" data-action="ics-reorder" type="button">Reorder reminder (.ics)</button>` : ''}
   </div>
@@ -476,6 +484,7 @@ function boot() {
     store.clearAll();
     current = null;
     $('results').hidden = true;
+    document.body.classList.remove('pv-has-results');
     $<HTMLFormElement>('calcForm').reset();
     renderProfiles();
     $('storageMsg').textContent = 'All saved data erased from this device.';

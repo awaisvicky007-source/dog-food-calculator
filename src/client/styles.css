@@ -846,6 +846,51 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
   transform: translateY(0);
 }
 
+/* ---------- Mobile sticky actions (Save as PDF / Save / Copy) ---------- */
+.pv-mobile-actions {
+  display: none; /* hidden by default, shown on mobile ≤700px */
+}
+
+@media (max-width: 700px) {
+  .pv-mobile-actions {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #FFFFFF;
+    border-top: 1px solid var(--pv-border);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+    padding: 10px 12px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    gap: 8px;
+    z-index: 100;
+  }
+  .pv-mobile-actions .btn {
+    flex: 1;
+    font-size: 13px;
+    padding: 10px 6px;
+    min-height: 44px;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pv-mobile-actions .btn.primary {
+    flex: 1.4;
+    font-size: 13px;
+    padding: 10px 8px;
+  }
+  /* Hide the inline primary button row on mobile — sticky bar replaces it */
+  #results .btnrow.actions-primary {
+    display: none;
+  }
+  /* Give page breathing room so last content is not hidden behind sticky bar */
+  body.pv-has-results {
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
+  }
+}
+
 /* ---------- Print: clean plan, brand colors muted ---------- */
 @media print {
   body > header.hero,
@@ -942,4 +987,13 @@ details.more[open] > *:not(summary) { margin-top: 14px; }
   }
   #results .vet-sheet h3 { color: #000 !important; }
   a { color: #000 !important; text-decoration: none !important; }
+
+  /* Hide sticky mobile bar in print output */
+  #results .pv-mobile-actions,
+  .pv-mobile-actions {
+    display: none !important;
+  }
+  body.pv-has-results {
+    padding-bottom: 0 !important;
+  }
 }

@@ -100,9 +100,15 @@ function schema(origin: string, path: string) {
     '@type': 'WebApplication',
     '@id': `${url}#webapp`,
     name: 'PawVortex Dog Food Calculator',
+    alternateName: [
+      'Dog Calorie Calculator',
+      'Pet Calorie Calculator',
+      'Dog Feeding Calculator',
+      'Dog Food Calorie Calculator',
+    ],
     url,
     description:
-      'Free US dog food calculator: daily calories (RER × life-stage multiplier), cups, grams, meals, treats, and water — with every step shown. No sign-up, no account.',
+      'Free US dog food calculator and dog calorie calculator: daily kcal (RER × life-stage multiplier), cups, grams, meals, treats, and water — with every step shown. No sign-up, no account.',
     applicationCategory: 'UtilitiesApplication',
     applicationSubCategory: 'PetNutritionCalculator',
     operatingSystem: 'Any (web browser)',
@@ -114,10 +120,10 @@ function schema(origin: string, path: string) {
     publisher: { '@id': ORG_ID },
     isPartOf: { '@id': SITE_ID },
     datePublished: '2026-11-04',
-    dateModified: '2026-11-04',
+    dateModified: '2026-11-07',
     screenshot: { '@type': 'ImageObject', url: OG_IMAGE_URL, caption: OG_IMAGE_CAPTION },
     featureList: [
-      'Daily calorie estimate (RER × life-stage multiplier per Merck)',
+      'Daily calorie estimate in kcal (RER × life-stage multiplier per Merck)',
       'Cups, grams, and per-meal amounts from your food label',
       'Wet/dry/mixed feeding — calculates cans or cups per day',
       'Treat budget (10% of daily calories — WSAVA)',
@@ -162,7 +168,7 @@ export function renderPage(o: RenderOptions): string {
 
   const title = 'Dog Food Calculator — Calories, Cups & Meals | PawVortex';
   const desc =
-    'Free US dog food calculator. Get daily calories, cups, grams, meals, treats and water — every step shown, sources cited. No sign-up, no account.';
+    'Free dog food calculator and dog calorie calculator. Get daily kcal, cups, grams, meals, treats and water — every step shown, sources cited.';
   const h1 = 'Dog Food Calculator: Calories, Cups & Meals for Your Dog';
 
   const sources = citationList(Object.keys(CITATIONS) as (keyof typeof CITATIONS)[])
@@ -228,16 +234,9 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
 <a class="skip" href="#calc">Skip to calculator</a>
 <header class="hero">
   <div class="wrap">
-    <div class="hero-top">
-      <nav aria-label="Breadcrumb" class="crumbs"><a href="${origin}">PawVortex</a> / <a href="${origin}/tools">Tools</a> / <span>Dog Food Calculator</span></nav>
-      <a href="https://account.pawvortex.com/" class="hero-signin" rel="noopener">
-        <img src="https://cdn.shopify.com/s/files/1/0689/8355/4214/files/pawvortex-signin-shop.webp?v=1794000556" width="24" height="24" alt="" loading="lazy">
-        <img src="https://cdn.shopify.com/s/files/1/0689/8355/4214/files/pawvortex-signin-google.webp?v=1794000556" width="24" height="24" alt="" loading="lazy">
-        <span>Sign in with Shop or Google</span>
-      </a>
-    </div>
+    <nav aria-label="Breadcrumb" class="crumbs"><a href="${origin}">PawVortex</a> / <a href="${origin}/tools">Tools</a> / <span>Dog Food Calculator</span></nav>
     <h1>${esc(h1)}</h1>
-    <p class="lead">Daily calories, cups, grams, meals, treats and water for your dog — with every step shown. Free. No sign-up. Your details stay on your device.</p>
+    <p class="lead">Daily calories (kcal), cups, grams, meals, treats and water for your dog — with every step shown. Free. No sign-up. Your details stay on your device.</p>
     <ul class="pills"><li>No account</li><li>Show-the-math</li><li>Veterinary &amp; government sources only</li></ul>
   </div>
 </header>
@@ -324,8 +323,8 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
 <section id="compare" class="card" hidden></section>
 
 <section class="content card" aria-labelledby="calories-h">
-  <h2 id="calories-h">How many calories does your dog need?</h2>
-  <p>Daily calories for dogs follow one published formula. Resting energy (RER) is <strong>70 × body weight in kg raised to the power 0.75</strong>. Then multiply RER by a life-stage factor to get maintenance energy (MER) — the actual daily calorie target: <strong>1.6</strong> for neutered adults, <strong>1.8</strong> for intact adults, <strong>1.4</strong> for obesity-prone or very inactive dogs, <strong>2×</strong> for puppies over 4 months, and <strong>3×</strong> for puppies under 4 months.</p>
+  <h2 id="calories-h">Dog calorie calculator: how many calories should your dog eat?</h2>
+  <p>Daily calories (kcal) for dogs follow one published formula. Resting energy (RER) is <strong>70 × body weight in kg raised to the power 0.75</strong>. Then multiply RER by a life-stage factor to get maintenance energy (MER) — the actual daily calorie target: <strong>1.6</strong> for neutered adults, <strong>1.8</strong> for intact adults, <strong>1.4</strong> for obesity-prone or very inactive dogs, <strong>2×</strong> for puppies over 4 months, and <strong>3×</strong> for puppies under 4 months.</p>
   <p>For example: a 30 lb (13.6 kg) neutered adult has an RER of about 496 kcal, and an MER of 496 × 1.6 = <strong>794 kcal per day</strong>. A 60 lb neutered adult lands near 1,334 kcal; a 10 lb neutered adult near 348 kcal. The calculator above does this math for any weight and age you enter.</p>
   <p>These formulas come from the <a href="${CITATIONS.merck_energy.url}" target="_blank" rel="noopener noreferrer">Merck Veterinary Manual</a>, which is the reference veterinarians use. AAHA’s 2021 nutrition guideline publishes a small range around each point value (1.4–1.6 × RER for neutered adults); the calculator uses Merck’s point value and notes the range so you can adjust with your vet.</p>
 </section>

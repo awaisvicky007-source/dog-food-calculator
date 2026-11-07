@@ -6,8 +6,12 @@ export interface Faq {
 
 export const FAQ: Faq[] = [
   {
-    q: 'How many calories does my dog need each day?',
+    q: 'How many calories should my dog eat per day?',
     a: 'Veterinary references estimate a dog\u2019s resting energy requirement (RER) as 70 × body weight in kg to the power 0.75, then multiply it by a factor for life stage and status — for example 1.6 for a neutered adult and 1.8 for an intact adult. For a 30 lb neutered adult, that works out to roughly 794 kcal per day. This calculator shows every step so you can see where the number comes from.',
+  },
+  {
+    q: 'How do I calculate kcal for my dog?',
+    a: 'Dog calorie needs are usually written as kcal (kilocalories) — one kcal equals one Calorie (capital C). The math is identical to calories: RER = 70 × body weight in kg to the power 0.75, then multiply by 1.6 for a neutered adult, 1.8 for intact, 1.4 for obesity-prone, and 2–3 for puppies and working dogs. A 30 lb neutered adult needs about 794 kcal per day. Enter your dog\u2019s weight above and the calculator shows kcal/day, cups, grams, treats and water.',
   },
   {
     q: 'How do I use this calculator by dog breed?',
