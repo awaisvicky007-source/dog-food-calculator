@@ -604,3 +604,5 @@ NEW § 2.9 — Storefront-parity sign-in link (SEO relevance + testing implicati
 
 § 11: ownership adds mobile UX owner
 
+| 2026-11-08 | 1.2 | **Query-triggered optimizations from GSC:** added `alternateName` entries `Dog Feeding Calculator`, `Dog Nutrition Calculator`, `Puppy Food Calculator` (matching 3 new GSC queries). Rewrote by-weight H2 opener to open with "How much should your dog eat per day?" (matches GSC query `how much should my dog eat calculator`, pos 70.5). Rewrote wet-food H2 opener to open with "How much wet food to feed a dog?" (matches GSC query pos 84). No new FAQs — page already 13 items. **Diagnosis:** all 10 GSC queries at pos 70–97 in the first 5 days post-indexing — this is normal for a new low-DR domain. The primary keyword `dog food calculator` at pos 93 is the leading indicator; other queries inherit its position. Lever to fix: nav link + indexing confirmation + patience, NOT more content. | PawVortex |
+

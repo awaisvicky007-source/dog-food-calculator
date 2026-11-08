@@ -105,6 +105,8 @@ function schema(origin: string, path: string) {
       'Pet Calorie Calculator',
       'Dog Feeding Calculator',
       'Dog Food Calorie Calculator',
+      'Dog Nutrition Calculator',
+      'Puppy Food Calculator',
     ],
     url,
     description:
@@ -338,7 +340,7 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
 
 <section class="content card" aria-labelledby="by-weight-h">
   <h2 id="by-weight-h">How much food to feed your dog — by weight and age</h2>
-  <p>Cups per day depend on your dog’s weight <em>and</em> the calorie density of the food. That’s why the calculator asks for kcal per cup from your bag — the same weight of dog needs different portions depending on whether the food is 300 or 400 kcal/cup.</p>
+  <p><strong>How much should your dog eat per day?</strong> It depends on your dog’s weight <em>and</em> the calorie density of the food. That’s why the calculator asks for kcal per cup from your bag — the same weight of dog needs different portions depending on whether the food is 300 or 400 kcal/cup.</p>
   <p>Rough guide using a typical dry food of 350 kcal/cup, neutered adults, 2 meals/day:</p>
   <ul>
     <li><strong>10 lb dog</strong> (≈ 348 kcal/day): about 1.0 cups/day · 0.5 cups per meal</li>
@@ -352,7 +354,7 @@ ${o.cssUrl ? `<link rel="stylesheet" href="${esc(o.cssUrl)}">` : ''}
 
 <section class="content card" aria-labelledby="wet-dry-h">
   <h2 id="wet-dry-h">How much wet food, dry food, or mixed feeding?</h2>
-  <p>The daily calorie target is the same regardless of food format. What changes is how you convert those calories into cans, cups, or grams.</p>
+  <p><strong>How much wet food to feed a dog?</strong> The daily calorie target is the same regardless of food format — wet, dry, or mixed. What changes is how you convert those calories into cans, cups, or grams.</p>
   <p><strong>Dry food:</strong> divide daily calories by kcal per cup (typically 300–500 kcal/cup). A 794 kcal dog with a 350 kcal/cup kibble eats ~2.27 cups/day.</p>
   <p><strong>Wet food:</strong> wet food is much less calorie-dense — typically <strong>70–120 kcal per 100 g</strong>, or about <strong>200–400 kcal per 13 oz (370 g) can</strong>. Divide daily calories by the can’s total kcal to get cans/day. A 794 kcal dog eating a 300 kcal/can wet food eats about 2.6 cans per day. Always check the can’s calorie statement — it varies by brand and recipe.</p>
   <p><strong>Mixed (dry + wet):</strong> add the calories from both sources and keep the total equal to your daily target. E.g., 400 kcal from wet + 400 kcal from dry = 800 kcal for a 794 kcal target.</p>
